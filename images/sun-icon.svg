@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#fc8916" stroke-width="3" stroke-linecap="round">
+    <!-- 태양 원 -->
+    <circle cx="50" cy="50" r="20" />
+    
+    <!-- 태양 광선 -->
+    <line x1="50" y1="15" x2="50" y2="25" />
+    <line x1="50" y1="75" x2="50" y2="85" />
+    <line x1="15" y1="50" x2="25" y2="50" />
+    <line x1="75" y1="50" x2="85" y2="50" />
+    
+    <line x1="25" y1="25" x2="32" y2="32" />
+    <line x1="68" y1="68" x2="75" y2="75" />
+    <line x1="25" y1="75" x2="32" y2="68" />
+    <line x1="68" y1="32" x2="75" y2="25" />
+    
+    <!-- 수평선 -->
+    <line x1="25" y1="60" x2="75" y2="60" />
+    <line x1="30" y1="65" x2="70" y2="65" />
+    <line x1="35" y1="70" x2="65" y2="70" />
+    <line x1="40" y1="75" x2="60" y2="75" />
+  </g>
+</svg>

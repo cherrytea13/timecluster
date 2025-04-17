@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>계획표 - 직관적인 일정 관리 앱</title>
+    <!-- Favicon -->
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- D3.js for chart visualization -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Day.js for date handling -->
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/dayjs.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="TimeCircle Logo" class="logo-img">
+                <h1>계획표</h1>
+            </div>
+            <!-- 날짜 이동 탭을 헤더로 이동 -->
+            <div class="header-date-picker">
+                <button id="prev-date"><i class="fas fa-chevron-left"></i></button>
+                <span id="current-date">2025년 4월 14일</span>
+                <button id="next-date"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="user-menu">
+                <button id="settings-btn"><i class="fas fa-cog"></i></button>
+            </div>
+            <div class="header-right">
+                <button id="reset-all-btn" class="reset-btn">초기화</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Tab Content Container -->
+            <div class="tab-content-container">
+    <!-- 홈 탭 콘텐츠 (대시보드) -->
+    <div class="tab-content active" id="home-tab-content">
+      <div id="home-charts-wrapper" style="display:flex; gap:32px; justify-content:center; align-items:flex-start; margin-bottom:32px;"></div>
+      <div id="home-list-wrapper"></div>
+    </div>
+                <!-- 하루 계획(원형) + 목록형 계획표를 하나의 탭에서 표시 -->
+                <div class="tab-content" id="day-circle-content">
+                    <section class="chart-area chart-area-fullscreen">
+                        <h2 class="chart-title">오늘의 계획</h2>
+                        <div id="time-circle" style="width:600px; height:600px; margin:0 auto; background:transparent;"></div>
+                    </section>
+                    <!-- 시간표 형식의 계획표 바로 아래에 표시 -->
+                    <section class="list-area" style="margin-top:32px;">
+                        <div class="schedule-list full-width">
+                            <h3>오늘의 시간표</h3>
+                            <div class="list-controls">
+                                <div class="search-container">
+                                    <input type="text" id="schedule-search-list" placeholder="일정 검색...">
+                                    <button id="search-btn-list"><i class="fas fa-search"></i></button>
+                                </div>
+                                <div class="filter-container">
+                                    <select id="category-filter-list">
+                                        <option value="all">모든 카테고리</option>
+                                        <!-- Categories will be dynamically added here -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="day-timetable" class="day-timetable">
+                                <!-- 시간표가 여기에 동적으로 추가됩니다 -->
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 하루 기록 탭 콘텐츠 (하루 계획과 동일 구조, id는 day-record-content) -->
+                <div class="tab-content" id="day-record-content">
+                    <section class="chart-area chart-area-fullscreen">
+                        <h2 class="chart-title">오늘의 기록</h2>
+                        <div id="record-circle" style="width:600px; height:600px; margin:0 auto; background:transparent;"></div>
+                    </section>
+                    <!-- 시간표 형식의 기록표 바로 아래에 표시 -->
+                    <section class="list-area" style="margin-top:32px;">
+                        <div class="schedule-list full-width">
+                            <h3>오늘의 기록 시간표</h3>
+                            <div class="list-controls">
+                                <div class="search-container">
+                                    <input type="text" id="schedule-search-record" placeholder="기록 검색...">
+                                    <button id="search-btn-record"><i class="fas fa-search"></i></button>
+                                </div>
+                                <div class="filter-container">
+                                    <select id="category-filter-record">
+                                        <option value="all">모든 카테고리</option>
+                                        <!-- Categories will be dynamically added here -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="record-timetable" class="day-timetable">
+                                <!-- 시간표가 여기에 동적으로 추가됩니다 -->
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Tab 3: 일주일 - Week View -->
+                <div class="tab-content" id="week-view-content">
+                    <section class="week-area">
+                        <div class="week-container">
+                            <div id="week-calendar">
+                                <!-- Week calendar will be dynamically generated here -->
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - 제거됨 -->
+        </main>
+
+        <!-- Floating Add Button -->
+        <button class="floating-add-btn" id="add-schedule-btn">
+            <i class="fas fa-plus"></i>
+        </button>
+        
+        <!-- Bottom Tab Navigation -->
+        <div class="bottom-tab-navigation">
+    <button class="tab-btn active" data-tab="home-tab">
+        <i class="fas fa-home"></i>
+        <span>홈</span>
+    </button>
+            <button class="tab-btn" data-tab="day-circle">
+                <i class="fas fa-circle-notch"></i>
+                <span>하루 계획</span>
+            </button>
+            <button class="tab-btn" data-tab="day-record">
+                <i class="fas fa-pen"></i>
+                <span>하루 기록</span>
+            </button>
+            <button class="tab-btn" data-tab="week-view">
+                <i class="fas fa-calendar-week"></i>
+                <span>일주일</span>
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2025 타임서클 (TimeCircle)</p>
+            <div class="footer-links">
+                <a href="#" id="help-link">도움말</a>
+                <a href="#" id="about-link">소개</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="main-overlay" class="modal-overlay"></div>
+
+    <!-- Modal for Adding/Editing Schedule -->
+    <div class="modal" id="schedule-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">새 일정 추가</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="schedule-form">
+                    <div class="form-group">
+                        <label for="schedule-title">일정명</label>
+                        <input type="text" id="schedule-title" required>
+                    </div>
+                    <div class="form-group time-group">
+                        <div class="time-input">
+                            <label for="start-time">시작 시간</label>
+                            <input type="time" id="start-time" required>
+                        </div>
+                        <div class="time-input">
+                            <label for="end-time">종료 시간</label>
+                            <input type="time" id="end-time" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="schedule-category">카테고리</label>
+                        <select id="schedule-category">
+                            <option value="work">업무</option>
+                            <option value="study">학습</option>
+                            <option value="meal">식사</option>
+                            <option value="exercise">운동</option>
+                            <option value="rest">휴식</option>
+                            <option value="sleep">수면</option>
+                            <option value="transport">교통</option>
+                            <option value="other">기타</option>
+                        </select>
+                    </div>
+                    <!-- 색상 선택 제거: 카테고리에 따라 자동 지정됨 -->
+                    <div class="form-group">
+                        <label for="schedule-memo">메모</label>
+                        <textarea id="schedule-memo"></textarea>
+                    </div>
+                    <!-- 알림과 반복 기능 제거 -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-schedule" class="delete-btn-modal">삭제</button>
+                <div class="right-buttons">
+                    <button id="cancel-schedule">취소</button>
+                    <button id="save-schedule">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>설정</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="settings-form">
+                    <div class="form-group">
+                        <label for="time-interval">최소 시간 간격</label>
+                        <select id="time-interval">
+                            <option value="5">5분</option>
+                            <option value="15" selected>15분</option>
+                            <option value="30">30분</option>
+                            <option value="60">1시간</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="show-empty-time">빈 시간 표시</label>
+                        <input type="checkbox" id="show-empty-time" checked>
+                    </div>
+                    <div class="form-group">
+                        <label for="dark-mode">다크 모드</label>
+                        <input type="checkbox" id="dark-mode">
+                    </div>
+                    <div class="form-group">
+                        <h3>카테고리 관리</h3>
+                        <div id="category-manager">
+                            <!-- Category items will be dynamically added here -->
+                        </div>
+                        <button type="button" id="add-category-btn">새 카테고리 추가</button>
+                    </div>
+                    <div class="form-group">
+                        <h3>데이터 관리</h3>
+                        <button type="button" id="export-data-btn">데이터 내보내기</button>
+                        <button type="button" id="import-data-btn">데이터 가져오기</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="reset-settings">초기화</button>
+                <button id="save-settings">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="main-overlay"></div>
+
+    <!-- Custom JavaScript -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/timeCircle.js"></script>
+    <script src="js/homeTab.js"></script>
+    <script src="js/weekView.js"></script>
+    <script src="js/app.js"></script>
+  <!-- 데이터 초기화 모달 -->
+  <div id="reset-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2>정말 초기화 하시겠습니까?</h2>
+      <p>모든 저장 내용이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
+      <div class="modal-actions">
+        <button id="confirm-reset-btn" class="reset-btn">초기화</button>
+        <button id="cancel-reset-btn" class="cancel-btn">취소</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 일정 삭제 확인 모달 -->
+  <div id="delete-confirm-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>일정 삭제 확인</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>정말로 이 일정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-delete-btn">취소</button>
+        <button id="confirm-delete-btn" class="danger-btn">삭제</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
