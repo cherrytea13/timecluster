@@ -234,7 +234,11 @@ const TimeCircle = (function() {
         
         return arc();
       })
-      .style('fill', d => TimeCircleUtils.getCategoryColor(d.category))
+      .style('fill', d => {
+        // 일정 데이터에 color 속성이 있으면 그것을 사용하고, 없으면 카테고리 색상 사용
+        if (d.color) return d.color;
+        return d.category ? TimeCircleUtils.getCategoryColor(d.category) : 'transparent';
+      })
       .on('mouseover', showTooltip)
       .on('mousemove', moveTooltip)
       .on('mouseout', hideTooltip)
@@ -281,9 +285,10 @@ const TimeCircle = (function() {
           
           return arc();
         })
-        .style('fill', 'transparent') // 빈 시간대는 투명하게 처리
+        .style('fill', 'transparent') // 빈 시간대는 항상 투명하게 처리
         .style('stroke', 'var(--border-color)')
         .style('stroke-width', '0.5px')
+        .style('pointer-events', 'all') // 클릭 이벤트를 위해 포인터 이벤트 활성화
         .on('click', createScheduleFromEmptySlot);
     }
     

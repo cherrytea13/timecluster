@@ -308,7 +308,9 @@ const TimeCircleApp = (function() {
       return;
     }
     
-    const schedule = { title, startTime, endTime, category, memo };
+    // 카테고리에 맞는 색상 가져오기
+    const categoryColor = TimeCircleUtils.getCategoryColor(category);
+    const schedule = { title, startTime, endTime, category, memo, color: categoryColor };
     const activeTab = getActiveTab();
     
     if (isEditMode && currentScheduleId !== null) {
